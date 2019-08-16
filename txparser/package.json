@@ -1,0 +1,21 @@
+{
+  "name": "txparser",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "dependencies": {
+    "ethereumjs-abi": "^0.6.5",
+    "lodash": "^4.17.11",
+    "underscore": "^1.9.1"
+  }
+}
