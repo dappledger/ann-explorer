@@ -151,10 +151,10 @@ func (m *monRepo) Contract(hash string) (tx Transaction, txs []Transaction, err 
 	return
 }
 
-func (m *monRepo) LatestContracts(limit int) (txs []Transaction, err error) {
+func (m *monRepo) LatestContracts(limit int, skip int) (txs []Transaction, err error) {
 	c := m.txCollection()
 	defer c.Database.Session.Close()
-	query := c.Find(bson.M{"contract": bson.M{"$ne": ""}}).Sort("-height", "-nonce").Limit(limit)
+	query := c.Find(bson.M{"contract": bson.M{"$ne": ""}}).Sort("-height", "-nonce").Skip(skip).Limit(limit)
 	err = query.All(&txs)
 	return
 }
@@ -167,6 +167,18 @@ func (m *monRepo) Contracts(limit int) (txs []Transaction, err error) {
 	return
 }
 
+func (m *monRepo) ContractsCount() (int, error) {
+	c := m.txCollection()
+	defer c.Database.Session.Close()
+	return c.Find(bson.M{"contract": bson.M{"$ne": ""}}).Count()
+}
+
+func (m *monRepo) TxsCount() (int, error) {
+	c := m.txCollection()
+	defer c.Database.Session.Close()
+	return c.Find(bson.M{"contract": ""}).Count()
+}
+
 func (m *monRepo) TxsQuery(fromTo string) (txs []Transaction, err error) {
 	c := m.txCollection()
 	defer c.Database.Session.Close()
@@ -175,10 +187,10 @@ func (m *monRepo) TxsQuery(fromTo string) (txs []Transaction, err error) {
 	return
 }
 
-func (m *monRepo) LatestTxs(limit int) (txs []Transaction, err error) {
+func (m *monRepo) LatestTxs(limit int, skip int) (txs []Transaction, err error) {
 	c := m.txCollection()
 	defer c.Database.Session.Close()
-	query := c.Find(bson.M{"contract": ""}).Sort("-height", "-nonce").Limit(limit)
+	query := c.Find(bson.M{"contract": ""}).Sort("-height", "-nonce").Skip(skip).Limit(limit)
 	err = query.All(&txs)
 	return
 }
@@ -269,6 +281,14 @@ func (m *monRepo) LatestBlocks(limit int) (displayData []DisplayItem, err error)
 		return
 	}
 
+	return BlocksToDisplayItems(blocks, limit), nil
+}
+
+func BlocksToDisplayItems(blocks []Block, limit int) (items []DisplayItem) {
+
+	if len(blocks) == 0 {
+		return
+	}
 	dur := blocks[0].Time.Sub(blocks[len(blocks)-1].Time).Seconds()
 	totalTxs := 0
 	for _, v := range blocks {
@@ -276,11 +296,11 @@ func (m *monRepo) LatestBlocks(limit int) (displayData []DisplayItem, err error)
 	}
 	interval := dur / float64(limit)
 	tps := int(float64(totalTxs) / dur)
-	displayData = make([]DisplayItem, 0, len(blocks))
+	items = make([]DisplayItem, 0, len(blocks))
 	for _, v := range blocks {
-		displayData = append(displayData, DisplayItem{v, tps, interval})
+		items = append(items, DisplayItem{v, tps, interval})
 	}
-	return
+	return items
 }
 
 func (m *monRepo) BlocksFromTo(from, to int) (blocks []Block, err error) {

@@ -32,10 +32,12 @@ type Repo interface {
 	Contract(hash string) (tx Transaction, txs []Transaction, err error)
 	Height() (maxHeight int, err error)
 	Contracts(limit int) (txs []Transaction, err error)
-	LatestContracts(limit int) (txs []Transaction, err error)
+	ContractsCount() (int, error)
+	LatestContracts(limit int, skip int) (txs []Transaction, err error)
 	TxsQuery(fromTo string) (txs []Transaction, err error)
 	Txs(limit int) (txs []Transaction, err error)
-	LatestTxs(limit int) (txs []Transaction, err error)
+	TxsCount() (int, error)
+	LatestTxs(limit int, skip int) (txs []Transaction, err error)
 	OneContract(hash string) (contract Transaction, txs []Transaction, err error)
 	OneContractMeta(hash string) (*ContractMeta, error)
 	OneTransaction(hash string) (tx Transaction, err error)
@@ -191,10 +193,15 @@ func Height() (maxHeight int, err error) {
 	return
 }
 
-func LatestContracts(limit int) (txs []Transaction, err error) {
-	txs, err = deleteRepo.LatestContracts(limit)
+func ContractsCount() (int, error) {
+	return deleteRepo.ContractsCount()
+}
+
+func LatestContracts(limit int, skip int) (txs []Transaction, err error) {
+	txs, err = deleteRepo.LatestContracts(limit, skip)
 	return
 }
+
 func TxsQuery(fromTo string) (txs []Transaction, err error) {
 
 	txs, err = deleteRepo.TxsQuery(fromTo)
@@ -202,8 +209,12 @@ func TxsQuery(fromTo string) (txs []Transaction, err error) {
 	return
 }
 
-func LatestTxs(limit int) (txs []Transaction, err error) {
-	txs, err = deleteRepo.LatestTxs(limit)
+func TxsCount() (int, error) {
+	return deleteRepo.TxsCount()
+}
+
+func LatestTxs(limit int, skip int) (txs []Transaction, err error) {
+	txs, err = deleteRepo.LatestTxs(limit, skip)
 	return
 }
 

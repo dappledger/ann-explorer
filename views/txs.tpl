@@ -35,17 +35,25 @@
                 </div>
 
             </div>
+            <div class="float:right">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination" id="blocks-page">
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+
     $.extend( $.fn.dataTable.defaults, {
         searching: false,
         ordering:  false
     });
 
     var TxDashboardInit = function() {
+
         var renderTxList = function(txs) {
             var txsTrList = []
             for (var i=0; i<txs.length; i++) {
@@ -53,7 +61,7 @@
                     '<td><a href="/view/blocks/hash/'+txs[i].Block+'">'+txs[i].Block+'</a></td>',
                     '<td>'+txs[i].Hash+'</td>',
                     '<td>'+txs[i].From+'</td>',
-                    '<td>'+txs[i].Contract+'</td>',
+                    '<td>'+txs[i].To+'</td>',
                     '<td>'+txs[i].Nonce+'</td>'
                 ].join('');
                 txsTrList.push('<tr>'+trItem+'</tr>')
@@ -63,17 +71,20 @@
         }
         var flushTxList = function() {
             $.ajax({
-                url: '/view/txs/latest',
+                url: '/view/txs?p='+page(),
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(result) {
                     console.log(result)
                     if (result.success) {
-                        renderTxList(result.data)
-                        setTimeout(function() {
-                            flushTxList();
-                        }, 5000);
+                        renderTxList(result.data.data)
+                        renderPager(result.data.page)
+                        if(page() == "latest"){
+                            setTimeout(function() {
+                                flushTxList();
+                            }, 5000);
+                        }
                     }
                 }
             });

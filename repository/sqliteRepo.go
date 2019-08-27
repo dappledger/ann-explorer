@@ -17,8 +17,8 @@ func (this *sqliteRepo) Init() {
 	if ChainID == "" {
 		ChainID = GetStatus("").NodeInfo.NetWork
 	}
-	BLOCK_COLLECT += "_" + ChainID
-	TX_COLLECT += "_" + ChainID
+	BLOCK_COLLECT += "_t"
+	TX_COLLECT += "_t"
 	BLOCK_COLLECT = strings.Replace(BLOCK_COLLECT, "-", "_", -1)
 	TX_COLLECT = strings.Replace(TX_COLLECT, "-", "_", -1)
 	fmt.Println("BLOCK_COLLECT = ", BLOCK_COLLECT)
@@ -134,8 +134,9 @@ func (this *sqliteRepo) OneContractMeta(hash string) (meta *ContractMeta, err er
 	return
 }
 
-func (this *sqliteRepo) LatestTxs(limit int) (txs []Transaction, err error) {
-	rows, errQ := db.Query(txsNoContractLatestSQL, limit)
+//TODO:
+func (this *sqliteRepo) LatestTxs(limit int, skip int) (txs []Transaction, err error) {
+	rows, errQ := db.Query(txsNoContractLatestSQL, skip, limit)
 	if errQ != nil {
 		err = errQ
 		return
@@ -155,7 +156,7 @@ func (this *sqliteRepo) LatestTxs(limit int) (txs []Transaction, err error) {
 }
 
 func (this *sqliteRepo) Txs(limit int) (txs []Transaction, err error) {
-	rows, errQ := db.Query(txsNoContractSQL, limit)
+	rows, errQ := db.Query(txsNoContractSQL, 0, limit)
 	if errQ != nil {
 		err = errQ
 		return
@@ -209,7 +210,7 @@ func (this *sqliteRepo) TxsQuery(fromTo string) (txs []Transaction, err error) {
 }
 
 func (this *sqliteRepo) Contracts(limit int) (txs []Transaction, err error) {
-	rows, errQ := db.Query(txsContractSQL, limit)
+	rows, errQ := db.Query(txsContractSQL, 0, limit)
 	if errQ != nil {
 		err = errQ
 		return
@@ -228,8 +229,8 @@ func (this *sqliteRepo) Contracts(limit int) (txs []Transaction, err error) {
 	return
 }
 
-func (this *sqliteRepo) LatestContracts(limit int) (txs []Transaction, err error) {
-	rows, errQ := db.Query(txsContractLatestSQL, limit)
+func (this *sqliteRepo) LatestContracts(limit int, skip int) (txs []Transaction, err error) {
+	rows, errQ := db.Query(txsContractLatestSQL, skip, limit)
 	if errQ != nil {
 		err = errQ
 		return
@@ -414,5 +415,28 @@ func OneTransactionBySqlite(hash string) (tx Transaction, err error) {
 	}
 	defer stmt.Close()
 	err = stmt.QueryRow(hash).Scan(&tx.Hash, &tx.Payload, &tx.PayloadHex, &tx.From, &tx.To, &tx.Receipt, &tx.Amount, &tx.Nonce, &tx.Gas, &tx.Size, &tx.Block, &tx.Contract, &tx.Time, &tx.Height)
+	return
+}
+
+func (this *sqliteRepo) ContractsCount() (count int, err error) {
+
+	stmt, errP := db.Prepare(countContractsSQL)
+	if errP != nil {
+		err = errP
+		return
+	}
+	defer stmt.Close()
+	err = stmt.QueryRow().Scan(&count)
+	return
+}
+
+func (this *sqliteRepo) TxsCount() (count int, err error) {
+	stmt, errP := db.Prepare(countTxsSQL)
+	if errP != nil {
+		err = errP
+		return
+	}
+	defer stmt.Close()
+	err = stmt.QueryRow().Scan(&count)
 	return
 }
