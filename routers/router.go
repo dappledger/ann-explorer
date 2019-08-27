@@ -9,14 +9,14 @@ func init() {
 
 	beego.Router("/", &WebController{}, "get:Index")
 	webNs := beego.NewNamespace("/view",
-		beego.NSRouter("/blocks/latest", &WebController{}, "get:Latest"),
+		beego.NSRouter("/blocks", &WebController{}, "get:Blocks"),
 		beego.NSRouter("/blocks/hash/*", &WebController{}, "get:Block"),
 
 		beego.NSRouter("/txs/page", &WebController{}, "get:TxsPage"),
-		beego.NSRouter("/txs/latest", &WebController{}, "get:TxsLatest"),
+		beego.NSRouter("/txs", &WebController{}, "get:TxsLatest"),
 
 		beego.NSRouter("/contracts/page", &WebController{}, "get:ContractPage"),
-		beego.NSRouter("/contracts/latest", &WebController{}, "get:ContractsLatest"),
+		beego.NSRouter("/contracts", &WebController{}, "get:ContractsLatest"),
 		beego.NSRouter("/contracts/hash/:hash", &WebController{}, "get:Contract"),
 
 		beego.NSRouter("/search/:hash", &WebController{}, "get:Search"),

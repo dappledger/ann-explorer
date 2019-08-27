@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	DisplayNum   = 25
+	DisplayNum   = 50
 	BlockHashLen = 40
 	TxHashLen    = 64
 )
@@ -29,15 +29,34 @@ func (wc *WebController) Index() {
 	wc.TplName = "web.tpl"
 }
 
-func (wc *WebController) Latest() {
+func (wc *WebController) Blocks() {
 	defer wc.ServeJSON()
-	data, err := repository.LatestBlocks(DisplayNum)
+
+	p := getPage(wc)
+
+	count, err := repository.CollectionItemNum(repository.BLOCK_COLLECT)
 	if err != nil {
 		beego.Error(err)
+		return
 	}
+
+	from, to := calcFromTo(p, count)
+
+	blocks, err := repository.BlocksFromTo(from, to)
+	if err != nil {
+		beego.Error(err)
+		return
+	}
+
 	wc.Data["json"] = &Result{
 		Success: true,
-		Data:    data,
+		Data: &PaginationResult{
+			Data: repository.BlocksToDisplayItems(blocks, DisplayNum),
+			Page: Pagination{
+				Current: p,
+				Total:   totalPage(count),
+			},
+		},
 	}
 }
 
@@ -70,10 +89,25 @@ func (wc *WebController) TxsPage() {
 
 func (wc *WebController) TxsLatest() {
 	defer wc.ServeJSON()
-	data, _ := repository.LatestTxs(DisplayNum)
+
+	p := getPage(wc)
+
+	count, err := repository.TxsCount()
+	if err != nil {
+		return
+	}
+	skip := (p - 1) * DisplayNum
+
+	data, _ := repository.LatestTxs(DisplayNum, skip)
 	wc.Data["json"] = &Result{
 		Success: true,
-		Data:    data,
+		Data: PaginationResult{
+			Data: data,
+			Page: Pagination{
+				Current: p,
+				Total:   totalPage(count),
+			},
+		},
 	}
 }
 
@@ -84,10 +118,25 @@ func (wc *WebController) ContractPage() {
 
 func (wc *WebController) ContractsLatest() {
 	defer wc.ServeJSON()
-	data, _ := repository.LatestContracts(DisplayNum)
+
+	p := getPage(wc)
+
+	count, err := repository.ContractsCount()
+	if err != nil {
+		return
+	}
+	skip := (p - 1) * DisplayNum
+
+	data, _ := repository.LatestContracts(DisplayNum, skip)
 	wc.Data["json"] = &Result{
 		Success: true,
-		Data:    data,
+		Data: PaginationResult{
+			Data: data,
+			Page: Pagination{
+				Current: p,
+				Total:   totalPage(count),
+			},
+		},
 	}
 }
 

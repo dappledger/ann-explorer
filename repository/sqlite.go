@@ -48,7 +48,7 @@ const (
     );`
 
 	blockSortSQL      = `SELECT * FROM block_t ORDER BY height DESC limit ?`
-	blockRangeSQL     = `SELECT * FROM block_t WHERE height >= ? AND height <= ?`
+	blockRangeSQL     = `SELECT * FROM block_t WHERE height >= ? AND height <= ? ORDER BY HEIGHT DESC`
 	blockHashSQL      = `SELECT * FROM block_t WHERE hash = ?`
 	blockHeightSQL    = `SELECT * FROM block_t WHERE height = ?`
 	blockMaxHeightSQL = `SELECT MAX(height) FROM block_t`
@@ -59,9 +59,9 @@ const (
 	txsByToSQL             = `SELECT * FROM transaction_t WHERE to_addr = ?`
 	txsByFromOrToSQL       = `SELECT * FROM transaction_t WHERE to_addr = ? OR from_addr = ?`
 	txsNoContractSQL       = `SELECT * FROM transaction_t WHERE contract = "" limit ?`
-	txsNoContractLatestSQL = `SELECT * FROM transaction_t WHERE contract = "" ORDER BY height DESC, nonce DESC limit ? `
+	txsNoContractLatestSQL = `SELECT * FROM transaction_t WHERE contract = "" ORDER BY height DESC, nonce DESC limit ?,? `
 	txsContractSQL         = `SELECT * FROM transaction_t WHERE contract != "" limit ?`
-	txsContractLatestSQL   = `SELECT * FROM transaction_t WHERE contract != "" ORDER BY height DESC, nonce DESC limit ?`
+	txsContractLatestSQL   = `SELECT * FROM transaction_t WHERE contract != "" ORDER BY height DESC, nonce DESC limit ?,?`
 	txHashSQL              = `SELECT * FROM transaction_t WHERE hash = ?`
 	txContractSQL          = `SELECT * FROM transaction_t WHERE contract = ?`
 	txInsertSQL            = `INSERT INTO transaction_t VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
@@ -69,6 +69,10 @@ const (
 	contractMetaInsertSQL  = `INSERT INTO contract_meta_t VALUES(?,?)`
 
 	countSQL = "SELECT COUNT(hash) FROM %s"
+
+	countTxsSQL = `SELECT COUNT(hash) FROM transaction_t where contract = ""`
+	countContractsSQL = `SELECT COUNT(hash) FROM transaction_t WHERE contract != ""`
+	countBlocksSQL = `SELECT COUNT(height) FROM block_t`
 )
 
 var db *sql.DB

@@ -15,6 +15,7 @@
                     <span class="caption-helper" id="chain-id"></span>
                 </div>
                 <div class="actions">
+
                     <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#"> </a>
                 </div>
             </div>
@@ -25,7 +26,7 @@
                             <tr class="uppercase">
                                 <th> Block Hash</th>
                                   <th> Height </th>
-                                <th> Proposer </th>
+                                <th> Validator </th>
                                 <th> Txs </th>
                                 <th> Time </th>
                                 <th> Tps(-25) </th>
@@ -35,7 +36,12 @@
                         <tbody id="dashboard-block-table"></tbody>
                     </table>
                 </div>
-
+                <div>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination" id="blocks-page">
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
@@ -49,6 +55,8 @@
     });
 
     var BlockDashboardInit = function() {
+
+
         var renderBlockList = function(blocks) {
             var chainID = ''
             if (blocks.length > 0){                                                                                                                chainID = blocks[0].ChainID
@@ -59,7 +67,7 @@
                 var trItem = [
                     '<td title='+blocks[i].Hash +'><a href="/view/blocks/hash/'+blocks[i].Hash+'">'+blocks[i].Hash+'</a></td>',
                     '<td>'+blocks[i].Height+'</td>',
-                    '<td title='+blocks[i].ProposerAddress+'>'+blocks[i].ProposerAddress+'</td>',
+                    '<td title='+blocks[i].ValidatorsHash+'>'+blocks[i].ValidatorsHash+'</td>',
                     '<td>'+blocks[i].NumTxs+'</td>',
                     '<td>'+blocks[i].Time+'</td>',
                     '<td>'+blocks[i].Tps+'</td>',
@@ -73,17 +81,23 @@
         }
         var flushBlockList = function() {
             $.ajax({
-                url: '/view/blocks/latest',
+                url: '/view/blocks?p='+page(),
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(result) {
                     console.log(result)
                     if (result.success) {
-                        renderBlockList(result.data)
-                        setTimeout(function() {
-                            flushBlockList();
-                        }, 5000);
+                        renderBlockList(result.data.data);
+                        renderPager(result.data.page);
+                        var p = page();
+                        if(p == "latest"){
+                            setTimeout(function() {
+                                flushBlockList();
+                            }, 5000);
+                        }else{
+
+                        }
                     }
                 }
             });
