@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/dappledger/AnnChain-browser/rpc"
+	"github.com/dappledger/ann-explorer/rpc"
 )
 
 var (

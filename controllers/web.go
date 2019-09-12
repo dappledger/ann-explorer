@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/astaxie/beego"
-	"github.com/dappledger/AnnChain-browser/repository"
+	"github.com/dappledger/ann-explorer/repository"
 	"github.com/dappledger/AnnChain/eth/common"
 )
 

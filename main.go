@@ -6,10 +6,10 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
-	"github.com/dappledger/AnnChain-browser/job"
-	"github.com/dappledger/AnnChain-browser/repository"
-	_ "github.com/dappledger/AnnChain-browser/routers"
-	"github.com/dappledger/AnnChain-browser/rpc"
+	"github.com/dappledger/ann-explorer/job"
+	"github.com/dappledger/ann-explorer/repository"
+	_ "github.com/dappledger/ann-explorer/routers"
+	"github.com/dappledger/ann-explorer/rpc"
 )
 
 type logConfig struct {

@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/dappledger/AnnChain-browser/repository"
+	"github.com/dappledger/ann-explorer/repository"
 )
 
 type TxsController struct {

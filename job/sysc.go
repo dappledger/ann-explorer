@@ -11,8 +11,8 @@ import (
 
 	"github.com/astaxie/beego"
 
-	"github.com/dappledger/AnnChain-browser/repository"
-	"github.com/dappledger/AnnChain-browser/rpc"
+	"github.com/dappledger/ann-explorer/repository"
+	"github.com/dappledger/ann-explorer/rpc"
 	"github.com/dappledger/AnnChain/eth/common"
 	"github.com/dappledger/AnnChain/eth/crypto"
 	"github.com/dappledger/AnnChain/eth/rlp"

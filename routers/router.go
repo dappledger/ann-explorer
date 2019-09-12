@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/astaxie/beego"
-	. "github.com/dappledger/AnnChain-browser/controllers"
+	. "github.com/dappledger/ann-explorer/controllers"
 )
 
 func init() {

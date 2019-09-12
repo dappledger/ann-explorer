@@ -8,8 +8,8 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
-	"github.com/dappledger/AnnChain-browser/repository"
 	"github.com/dappledger/AnnChain/eth/common"
+	"github.com/dappledger/ann-explorer/repository"
 )
 
 type ApiController struct {
